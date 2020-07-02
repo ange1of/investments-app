@@ -1,0 +1,11 @@
+.priceUp {
+    color: #00be46;
+}
+
+.priceDown {
+    color: #da2d2d;
+}
+
+.priceEqual {
+    color: #000;
+}
