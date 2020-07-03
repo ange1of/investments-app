@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './StockDetail.css';
 import StockPrice from './StockPrice.js';
 import StockInfo from './StockInfo.js';
+import StockPriceGraph from './StockPriceGraph.js';
 
 function StockDetail({ stockId }) {
   let [buyPrice, updateBuyPrice] = useState(1123.25);
@@ -14,6 +15,7 @@ function StockDetail({ stockId }) {
         <StockPrice title="Покупка" price={buyPrice} currency="$"/>
         <StockPrice title="Продажа" price={sellPrice} currency="$"/>
       </div>
+      <StockPriceGraph stockId={stockId}/>
       <StockInfo 
         currency="$"
         openPrice="1111.11"
@@ -21,7 +23,8 @@ function StockDetail({ stockId }) {
         priceToIncomeRatio="22.00"
         yearPriceRange={{ min: 120.00, max: 1500.67 }}
         dayPriceRange={{ min: 1010.99, max: 1302.44 }}
-        dividends="10.35"/>
+        dividends="10.35"
+      />
     </div>
   );
 }

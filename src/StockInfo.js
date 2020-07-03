@@ -7,8 +7,8 @@ function StockInfo(props) {
             <p>Цена закрытия <span>{props.closePrice} {props.currency}</span></p>
             <p>Цена/Прибыль <span>{props.priceIncomeRatio}</span></p>
             <p>Годовой диапазон 
-                <span>{
-                    props.yearPriceRange.min} - {props.yearPriceRange.max} {props.currency}
+                <span>
+                    {props.yearPriceRange.min} - {props.yearPriceRange.max} {props.currency}
                 </span>
             </p>
             <p>Дневной диапазон 

@@ -1,0 +1,16 @@
+.StockPriceGraph {
+    width: 50vw;
+    min-height: 40vh;
+    display: grid;
+    grid-template-rows: 10fr 1fr;
+}
+
+.plotArea {
+    width: 100%;
+    border: 1px solid black;
+}
+
+.plotLegend {
+    width: 100%;
+    border: 1px solid black;
+}
