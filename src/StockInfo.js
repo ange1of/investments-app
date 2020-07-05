@@ -6,7 +6,7 @@ function StockInfo(props) {
             <p>Цена открытия <span>{props.openPrice} {props.currency}</span></p>
             <p>Цена закрытия <span>{props.closePrice} {props.currency}</span></p>
             <p>Цена/Прибыль <span>{props.priceIncomeRatio}</span></p>
-            <p>Годовой диапазон 
+            <p>Годовой диапазон
                 <span>
                     {props.yearPriceRange.min} - {props.yearPriceRange.max} {props.currency}
                 </span>
