@@ -1,0 +1,32 @@
+.SectorListElement {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: 0 auto;
+    border-bottom: 1px solid black;
+}
+
+.info {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5fr 4fr 5fr 1fr;
+}
+
+.changeMode:hover {
+    background-color: rgba(220, 230, 255, 0.3);
+}
+
+.info > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+code {
+    font-size: small;
+}
+
+p {
+    margin: 0 5px;
+    text-align: center;
+}

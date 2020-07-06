@@ -15,12 +15,12 @@ function Candle({ prices, minPlotPrice, maxPlotPrice, plotHeight }) {
 
     return (
         <div className="Candle">
-            <svg width="30" height={plotHeight}>
-                <line stroke={color} x1="15" x2="15" 
+            <svg width="20" height={plotHeight}>
+                <line stroke={color} x1="10" x2="10" 
                     y1={(maxPlotPrice-maxPrice)/(maxPlotPrice-minPlotPrice)*plotHeight}
                     y2={(maxPlotPrice-minPrice)/(maxPlotPrice-minPlotPrice)*plotHeight}
                 />
-                <rect x="5" width="20" fill={color}
+                <rect x="4" width="12" fill={color}
                     y={(maxPlotPrice-openPrice)/(maxPlotPrice-minPlotPrice)*plotHeight}
                     height={Math.max(Math.abs(openPrice - closePrice), 2)}
                 />

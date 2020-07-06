@@ -31,23 +31,43 @@ app.get('/api/stock-list', (request, response) => {
     });
 });
 
-app.get('/api/stock-list', (request, response) => {
-    console.log('[GET] /api/stock-list');
+app.get('/api/sector-list', (request, response) => {
+    console.log('[GET] /api/sector-list');
     
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
         sectors: [
             {
-                id: '',
-                name: '',
-                value: '',
-                valueChangePercent: '',
+                id: '1',
+                name: 'Индекс нефти и газа',
+                value: '7113',
+                valueChangePercent: -0.55,
+            },
+            {
+                id: '2',
+                name: 'Индекс электроэнергетики',
+                value: '2199',
+                valueChangePercent: 0.69,
+            },
+            {
+                id: '3',
+                name: 'Индекс телекоммуникаций',
+                value: '2314',
+                valueChangePercent: 1.53,
+            },
+            {
+                id: '4',
+                name: 'Индекс металлов и добычи',
+                value: '7711',
+                valueChangePercent: -0.29,
             }
         ]
     });
 });
 
 app.get('/api/index-value/:id/:period', (request, response) => {
+    console.log('[GET] /api/index-value');
+
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
         values: utils.generateBatch(3000, 3000, 180)
@@ -55,8 +75,9 @@ app.get('/api/index-value/:id/:period', (request, response) => {
 });
 
 app.get('/api/stock-detail/:ticker', (request, response) => {
-    const ticker = request.params.ticker;
+    console.log('[GET] /api/stock-detail');
 
+    const ticker = request.params.ticker;
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
         ticker: ticker,
@@ -76,6 +97,8 @@ app.get('/api/stock-detail/:ticker', (request, response) => {
 });
 
 app.get('/api/stock-price/:ticker/:period', (request, response) => {
+    console.log('[GET] /api/stock-price');
+
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
         prices: utils.generateBatch(1000, 1000, 180)

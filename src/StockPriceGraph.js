@@ -22,43 +22,36 @@ class StockPriceGraph extends React.Component {
         fetch(`http://localhost:3001/api/stock-price/${this.ticker}/${this.state.period}`)
         .then(result => result.json())
         .then(result => {
-            console.log('got result');
             this.prices = result.prices;
-            let maxPlotPrice = Math.max(...this.prices) * 1.03;
-            let minPlotPrice = Math.min(...this.prices) * 0.97;
+            let maxPlotPrice = Math.max(...this.prices) * 1.005;
+            let minPlotPrice = Math.min(...this.prices) * 0.995;
             let plotHeight = 400;
 
             this.setState({
                 currentPrice: this.prices[this.prices.length - 1],
-                maxPlotPrice: maxPlotPrice * 1.1,
-                minPlotPrice: minPlotPrice * 0.9,
+                maxPlotPrice: maxPlotPrice,
+                minPlotPrice: minPlotPrice,
                 plotHeight: plotHeight,
             }, () => {
-                console.log(`candles state: ${JSON.stringify(this.state)}`);
                 this.renderCandles();
 
                 this.websocket.addEventListener('message', event => {
-                    console.log(`state: ${JSON.stringify(this.state)}`);
                     let newPrice = JSON.parse(event.data).buy;
                     this.setState(state => {
                         return {
                             currentPrice: newPrice,
-                            maxPlotPrice: (newPrice > state.maxPlotPrice ? newPrice * 1.1 : state.maxPlotPrice),
-                            minPlotPrice: (newPrice < state.minPlotPrice ? newPrice * 0.9 : state.minPlotPrice),
+                            maxPlotPrice: (newPrice > state.maxPlotPrice ? newPrice * 1.005 : state.maxPlotPrice),
+                            minPlotPrice: (newPrice < state.minPlotPrice ? newPrice * 0.995 : state.minPlotPrice),
                         }
                     });
                     this.renderCandles();
-                    console.log(`graph accepted: ${event.data}`);
                 });
             });
-            console.log(`state: ${JSON.stringify(this.state)}`);
-            
         });
     }
 
     renderCurrentPrice() {
         const topShift = (this.state.maxPlotPrice - this.state.currentPrice)/(this.state.maxPlotPrice - this.state.minPlotPrice) * this.state.plotHeight;
-        console.log(`shift: ${topShift}\nmaxPlotPrice: ${this.maxPlotPrice}, curr: ${this.state.currentPrice}`);
         return <hr style={{ top: topShift }}/>
     }
 
@@ -85,7 +78,6 @@ class StockPriceGraph extends React.Component {
     }
 
     render() {
-        console.log(`render state: ${JSON.stringify(this.state)}`);
         console.log(this.state.candles.length);
         if (!this.state || !this.state.candles) {
             return (

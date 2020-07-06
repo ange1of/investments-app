@@ -1,6 +1,7 @@
 .Candle {
     height: 100%;
-    width: 30px;
+    width: 20px;
+    margin: 1px;
 }
 
 .Candle:hover {
