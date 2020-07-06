@@ -15,3 +15,10 @@
     width: 100%;
     border: 1px solid black;
 }
+
+hr {
+    border: none;
+    border-top:1px dotted black;
+    position: absolute;
+    width: 100%;
+}

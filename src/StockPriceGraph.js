@@ -2,50 +2,91 @@ import React from 'react';
 import './StockPriceGraph.css';
 import Candle from './Candle.js';
 
-function StockPriceGraph({ stockId }) {
+class StockPriceGraph extends React.Component {
+    prices = [];
+    candles = [];
+    websocket = null;
 
-    function generatePrices(initialValue) {
-        let result = [];
-        let curValue = initialValue;
-        for (let i = 0; i < 180; i++) {
-            let newValue = Number((curValue + Math.random()*15 - 7.5).toFixed(2));
-            result.push(newValue);
-            
-            curValue = newValue;
-        }
-        return result;
+    constructor(props) {
+        super(props);
+        this.renderCurrentPrice = this.renderCurrentPrice.bind(this);
+        this.websocket = props.websocket;
+        this.ticker = props.ticker;
+
+        fetch(`http://localhost:3001/api/price/${this.ticker}/${props.period}`)
+        .then(result => result.json())
+        .then(result => {
+            console.log('got result');
+            this.prices = result.prices;
+            let maxPlotPrice = Math.max(...this.prices) * 1.1;
+            let minPlotPrice = Math.min(...this.prices) * 0.9;
+            let plotHeight = 400;
+
+            let chunkSize = Math.round(this.prices.length/30);
+            let key = 0;
+
+            this.state = {
+                period: '5min',
+                currentPrice: this.prices[this.prices.length - 1],
+                maxPlotPrice: maxPlotPrice * 1.1,
+                minPlotPrice: minPlotPrice * 0.9,
+                plotHeight: plotHeight,
+            };
+            console.log(`state: ${JSON.stringify(this.state)}`);
+
+            for (let i = 0; i < this.prices.length; i+= chunkSize) {
+                this.candles.push(
+                    <Candle
+                        key={key++}
+                        prices={this.prices.slice(i, i+chunkSize)}
+                        maxPlotPrice={this.state.maxPlotPrice}
+                        minPlotPrice={this.state.minPlotPrice}
+                        plotHeight={this.state.plotHeight}
+                    />
+                );
+            }
+        });
     }
-    let prices = generatePrices(1000);
-    let maxPlotPrice = Math.max(...prices) + 5;
-    let minPlotPrice = Math.min(...prices) - 5;
-    let plotHeight = 400;
-    console.log(prices);
-    console.log(maxPlotPrice);
-    console.log(minPlotPrice);
 
-    let candles = [];
-    let chunkSize = Math.round(prices.length/30);
-    let key = 0;
-    for (let i = 0; i < prices.length; i+= chunkSize) {
-        candles.push(
-            <Candle
-                key={key++}
-                prices={prices.slice(i, i+chunkSize)}
-                maxPlotPrice={maxPlotPrice}
-                minPlotPrice={minPlotPrice}
-                plotHeight={plotHeight}
-            />
+    componentDidMount() {
+        this.websocket.addEventListener('message', event => {
+            console.log(`state: ${JSON.stringify(this.state)}`);
+            let newPrice = JSON.parse(event.data).buy;
+            if (this.state) {
+                this.setState(state => {
+                    return {
+                        currentPrice: newPrice,
+                        maxPlotPrice: (newPrice > state.maxPlotPrice ? newPrice * 1.1 : state.maxPlotPrice),
+                        minPlotPrice: (newPrice < state.minPlotPrice ? newPrice * 0.9 : state.minPlotPrice),
+                    }
+                });
+            }
+            console.log(`graph accepted: ${event.data}`);
+        });
+    }
+
+    renderCurrentPrice() {
+        const topShift = (this.state.maxPlotPrice - this.state.currentPrice)/(this.state.maxPlotPrice - this.state.minPlotPrice) * this.state.plotHeight;
+        console.log(`shift: ${topShift}\nmaxPlotPrice: ${this.maxPlotPrice}, curr: ${this.state.currentPrice}`);
+        return <hr style={{ top: topShift }}/>
+    }
+
+    render() {
+        if (!this.state) {
+            return (
+                <div>Loading data...</div>
+            );
+        }
+        return (
+            <div className="StockPriceGraph">
+                <div className="plotArea">
+                    {this.candles}
+                    {this.renderCurrentPrice()}
+                </div>
+                <div className="plotLegend"></div>
+            </div>
         );
     }
-
-    return (
-        <div className="StockPriceGraph">
-            <div className="plotArea">
-                {candles}
-            </div>
-            <div className="plotLegend"></div>
-        </div>
-    );
 }
 
 export default StockPriceGraph;

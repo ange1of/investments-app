@@ -1,32 +1,69 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React from 'react';
 import './StockDetail.css';
 import StockPrice from './StockPrice.js';
 import StockInfo from './StockInfo.js';
 import StockPriceGraph from './StockPriceGraph.js';
+import ErrorMessage from './ErrorMessage.js';
 
-function StockDetail({ stockId }) {
-  let [buyPrice, updateBuyPrice] = useState(1123.25);
-  let [sellPrice, updateSellPrice] = useState(1115.14);
+class StockDetail extends React.Component {
+  data=null;
+  errorMessage = null;
+  socket = new WebSocket("ws://localhost:3001");
 
-  return (
-    <div className="StockDetail">
-      <div className="StockPriceContainer">
-        <StockPrice title="Покупка" price={buyPrice} currency="$"/>
-        <StockPrice title="Продажа" price={sellPrice} currency="$"/>
+  constructor(props) {
+    super(props);
+    this.ticker = props.ticker;
+    fetch(`http://localhost:3001/api/stock-detail/${this.stockId}`)
+      .then(result => result.json())
+      .then(json => {
+        this.data = json
+        this.state = {
+          buyPrice: this.data.currentPrice.buy,
+          sellPrice: this.data.currentPrice.sell
+        }
+      })
+      .catch(error => this.errorMessage = error.message);
+  }
+
+  componentDidMount() {
+    this.socket.onmessage = event => {
+      console.log(`message: ${event.data}`);
+      this.setState({
+          buyPrice: JSON.parse(event.data).buy,
+          sellPrice: JSON.parse(event.data).sell
+      });
+    };
+  
+    this.socket.onclose = event => {
+      if (!event.wasClean) {
+        this.errorMessage = 'Соединение с сервером прервано';
+      }
+    };
+  
+    this.socket.onerror = error => {
+      this.errorMessage = `Ошибка подключения к серверу: ${error.message}`;
+    };
+  }
+
+  render() {
+    if (this.errorMessage) {
+      return <ErrorMessage message={this.errorMessage}/>
+    }
+    if (!this.state || !this.data) {
+      return <div>Loading...</div>
+    }
+    return (
+      <div className="StockDetail">
+        <div className="StockPriceContainer">
+          <StockPrice title="Покупка" price={this.state.buyPrice} currency={this.data.currency}/>
+          <StockPrice title="Продажа" price={this.state.sellPrice} currency={this.data.currency}/>
+        </div>
+        <StockPriceGraph ticker={this.ticker} websocket={this.socket}/>
+        <StockInfo {...this.data.companyInfo} currency={this.data.currency}/>
+        { this.errorMessage ? <ErrorMessage data={this.errorMessage}/> : '' }
       </div>
-      <StockPriceGraph stockId={stockId}/>
-      <StockInfo 
-        currency="$"
-        openPrice="1111.11"
-        closePrice="1222.34"
-        priceToIncomeRatio="22.00"
-        yearPriceRange={{ min: 120.00, max: 1500.67 }}
-        dayPriceRange={{ min: 1010.99, max: 1302.44 }}
-        dividends="10.35"
-      />
-    </div>
-  );
+    );
+  }
 }
 
 export default StockDetail;
