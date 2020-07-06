@@ -1,12 +1,11 @@
 .App {
   text-align: center;
+  width: 100%;
 }
 
-.App-header {
+.App-header, .App {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-content: space-between;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }

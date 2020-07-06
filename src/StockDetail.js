@@ -13,7 +13,7 @@ class StockDetail extends React.Component {
   constructor(props) {
     super(props);
     this.ticker = props.ticker;
-    fetch(`http://localhost:3001/api/stock-detail/${this.stockId}`)
+    fetch(`http://localhost:3001/api/stock-detail/${this.ticker}`)
       .then(result => result.json())
       .then(json => {
         this.data = json

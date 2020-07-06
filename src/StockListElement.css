@@ -1,0 +1,27 @@
+.StockListElement {
+    width: 80%;
+    display: grid;
+    grid-template-columns: 4fr 3fr 3fr 2fr;
+    border-bottom: 1px solid black;
+    padding: 5px;
+}
+
+.StockListElement:hover {
+    background-color: rgba(220, 230, 255, 0.3);
+}
+
+.priceChange {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.priceChange > svg {
+    margin: 0 5px;
+}
+
+.sector {
+    font-size: small;
+    display: flex;
+    align-items: center;
+}

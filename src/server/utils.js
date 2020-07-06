@@ -9,7 +9,7 @@ function initPrice(buy, sell) {
 }
 
 function nextPrice() {
-    price.buy = Number((price.buy + Math.random()*3 - 1.5).toFixed(2));
+    price.buy = Number((price.buy + Math.random()*5 - 2.5).toFixed(2));
     price.sell = Number((price.buy - Math.random()).toFixed(2));
     return {...price};
 }
