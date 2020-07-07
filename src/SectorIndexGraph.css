@@ -8,8 +8,6 @@
 .plotArea {
     position: relative;
     overflow: hidden;
-    border: none;
-    border-bottom: 0.5px solid black;
 }
 
 .plotLegend {
@@ -26,17 +24,29 @@ p.currentValue {
     font-size: small;
 }
 
+.currentValueLine {
+    border: none;
+    border-top:1px dotted black;
+    position: absolute;
+    width: 100%;
+    margin: 0;
+}
+
 .yValues {
     position: absolute;
     height: 100%;
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-start; */
     z-index: -1;
 }
 
 .yValue {
+    position: absolute;
     font-size: small;
+}
 
+.yValueLine {
+    border: 0.5px solid black;
 }

@@ -21,8 +21,8 @@ function Candle({ prices, minPlotPrice, maxPlotPrice, plotHeight }) {
                     y2={(maxPlotPrice-minPrice)/(maxPlotPrice-minPlotPrice)*plotHeight}
                 />
                 <rect x="4" width="12" fill={color}
-                    y={(maxPlotPrice-openPrice)/(maxPlotPrice-minPlotPrice)*plotHeight}
-                    height={Math.max(Math.abs(openPrice - closePrice), 2)}
+                    y={(maxPlotPrice-Math.max(openPrice, closePrice))/(maxPlotPrice-minPlotPrice)*plotHeight}
+                    height={Math.max(Math.abs(openPrice - closePrice)/(maxPlotPrice-minPlotPrice)*plotHeight, 2)}
                 />
             </svg>
         </div>

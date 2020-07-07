@@ -17,6 +17,7 @@ class SectorIndexGraph extends React.Component {
         this.renderCurrentValueLine = this.renderCurrentValueLine.bind(this);
         this.renderCurrentValue = this.renderCurrentValue.bind(this);
         this.renderYValues = this.renderYValues.bind(this);
+        this.getTopShift = this.getTopShift.bind(this);
     }
 
     componentDidMount() {
@@ -24,11 +25,15 @@ class SectorIndexGraph extends React.Component {
             .then(result => result.json())
             .then(result => {
                 this.values = result.values;
-                this.maxPlotPrice = Math.max(...this.values) + 5;
-                this.minPlotPrice = Math.min(...this.values) - 5;
+                this.maxPlotValue = Math.max(...this.values) + 5;
+                this.minPlotValue = Math.min(...this.values) - 5;
                 this.renderCandles();
                 this.setState({ value: this.values[this.values.length - 1]});
             });
+    }
+
+    getTopShift(value=this.state.value) {
+        return (this.maxPlotValue - value)/(this.maxPlotValue - this.minPlotValue) * this.plotHeight;
     }
 
     renderCandles() {
@@ -40,8 +45,8 @@ class SectorIndexGraph extends React.Component {
                 <Candle
                     key={key++}
                     prices={this.values.slice(i, i+chunkSize)}
-                    maxPlotPrice={this.maxPlotPrice}
-                    minPlotPrice={this.minPlotPrice}
+                    maxPlotPrice={this.maxPlotValue}
+                    minPlotPrice={this.minPlotValue}
                     plotHeight={this.plotHeight}
                 />
             );
@@ -51,14 +56,12 @@ class SectorIndexGraph extends React.Component {
     }
 
     renderCurrentValueLine() {
-        const topShift = (this.maxPlotPrice - this.state.value)/(this.maxPlotPrice - this.minPlotPrice) * this.plotHeight;
-        return  <hr style={{ top: topShift }} />;
+        return  <hr className="currentValueLine" style={{ top: this.getTopShift() }}/>;
     }
 
     renderCurrentValue() {
-        const topShift = (this.maxPlotPrice - this.state.value)/(this.maxPlotPrice - this.minPlotPrice) * this.plotHeight;
         return (
-            <p className="currentValue" style={{ top: topShift - 7, right: 0 }}>
+            <p className="currentValue" style={{ top: this.getTopShift(), right: 0 }}>
                 <code>{this.state.value}</code>
             </p>
         );
@@ -67,13 +70,23 @@ class SectorIndexGraph extends React.Component {
     renderYValues() {
         let values = [];
         let key = 0;
+        values.push(
+            <div className="yValue" key={key++} style={{ top: 0 }}>
+                <code>{Math.round(this.maxPlotValue)}</code>
+            </div>,
+            <div className="yValue" key={key++} style={{ bottom: 0 }}>
+                <code>{Math.round(this.minPlotValue)}</code>
+            </div>
+        );
+
         for (let value of [
-            this.maxPlotPrice, (this.maxPlotPrice*2 + this.minPlotPrice)/3,
-            (this.minPlotPrice*2 + this.maxPlotPrice)/3, this.minPlotPrice
+            (this.maxPlotValue*2 + this.minPlotValue)/3,
+            (this.minPlotValue*2 + this.maxPlotValue)/3,
         ]) {
-            values.push(<p className="yValue" key={key++}>
-                <code>—{Math.round(value)}</code>
-            </p>);
+            values.push(<div className="yValue" key={key++} style={{ top: this.getTopShift(value)+2+'px' }}>
+                <hr className="yValueLine"/>
+                <code>{Math.round(value)}</code>
+            </div>);
         }
         return (
             <div className="yValues">

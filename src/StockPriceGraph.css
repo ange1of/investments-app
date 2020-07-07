@@ -1,11 +1,10 @@
 .StockPriceGraph {
-    height: 400px;
     display: grid;
     grid-template-rows: 10fr 1fr;
 }
 
 .plotArea {
-    width: 100%;
+    width: fit-content;
     border: 1px solid black;
     display: flex;
     justify-items: space-between;
@@ -17,9 +16,15 @@
     border: 1px solid black;
 }
 
-hr {
+.currentPriceLine {
     border: none;
     border-top:1px dotted black;
     position: absolute;
     width: 100%;
+    margin: 0;
+}
+
+.yValueLine {
+    width: 15px;
+    margin: 0;
 }
