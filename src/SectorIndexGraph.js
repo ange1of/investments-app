@@ -1,6 +1,7 @@
 import React from 'react';
 import Candle from './Candle';
 import './SectorIndexGraph.css';
+import { unixTimeConversionFunctions } from './constants/unixTimeConversionFunctions';
 
 class SectorIndexGraph extends React.Component {
     plotHeight = 300;
@@ -12,12 +13,14 @@ class SectorIndexGraph extends React.Component {
             candles: [],
             value: props.value,
             values: [],
-            period: null
+            period: null,
+            timeInterval: {}
         };
         this.renderCandles = this.renderCandles.bind(this);
         this.renderCurrentValueLine = this.renderCurrentValueLine.bind(this);
         this.renderCurrentValue = this.renderCurrentValue.bind(this);
         this.renderYValues = this.renderYValues.bind(this);
+        this.renderXValues = this.renderXValues.bind(this);
         this.getTopShift = this.getTopShift.bind(this);
     }
 
@@ -88,6 +91,25 @@ class SectorIndexGraph extends React.Component {
         );
     }
 
+    renderXValues() {
+        let values = [];
+        let key = 0;
+        for (let value of [
+            this.state.timeInterval.start, 
+            Math.round((this.state.timeInterval.start * 2 + this.state.timeInterval.end)/3),
+            Math.round((this.state.timeInterval.start + this.state.timeInterval.end * 2)/3),
+            this.state.timeInterval.end
+        ]) {
+            values.push(
+                <p key={key++}>
+                    <code>{unixTimeConversionFunctions[this.state.period](value)}</code>
+                </p>
+            );
+        }
+
+        return values;
+    }
+
     changePeriod(period) {
         if (period === this.state.period) return;
 
@@ -99,7 +121,8 @@ class SectorIndexGraph extends React.Component {
                         value: result.values[result.values.length - 1],
                         values: result.values,
                         maxPlotValue: Math.max(...result.values) + 5,
-                        minPlotValue: Math.min(...result.values) - 5
+                        minPlotValue: Math.min(...result.values) - 5,
+                        timeInterval: result.timeInterval
                 }, () => this.renderCandles());
             });
         });
@@ -116,23 +139,23 @@ class SectorIndexGraph extends React.Component {
                 <div className="periodBlock">
                     <div className={`periodBlockElement ${this.state.period==='5min' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('5min')}>
-                        5 мин
+                        <code>5 мин</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1hour' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1hour')}>
-                        1 час
+                        <code>1 час</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1day' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1day')}>
-                        1 день
+                        <code>1 день</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1month' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1month')}>
-                        1 мес
+                        <code>1 мес</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1year' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1year')}>
-                        1 год
+                        <code>1 год</code>
                     </div>
                 </div>
                 <div className="plotArea" style={{height: this.plotHeight+'px'}}>
@@ -142,7 +165,7 @@ class SectorIndexGraph extends React.Component {
                     {this.renderYValues()}
                 </div>
                 <div className="plotLegend">
-
+                    {this.state.period ? this.renderXValues() : ''}
                 </div>
             </div>
         )

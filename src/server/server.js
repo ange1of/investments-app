@@ -72,7 +72,8 @@ app.get('/api/index-value/:id/:period', (request, response) => {
 
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
-        values: utils.generateBatch(3000, 3000, 180)
+        values: utils.generateBatch(3000, 3000, 180),
+        timeInterval: utils.getTimeInterval[request.params.period]()
     });
 });
 
@@ -104,7 +105,8 @@ app.get('/api/stock-price/:ticker/:period', (request, response) => {
 
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
-        prices: utils.generateBatch(1000, 1000, 180)
+        prices: utils.generateBatch(1000, 1000, 180),
+        timeInterval: utils.getTimeInterval[request.params.period]()
     });
 });
 
@@ -112,14 +114,14 @@ app.get('/api/stock-price/:ticker/:period', (request, response) => {
 app.ws('/api/notifications', 
     (ws, request) => {
         console.log('[WS] connection at /api/notifications');
-        // let intervalId = setInterval(() => ws.send(JSON.stringify(
-        //     {
-        //         title: 'Акции YNDX продолжают расти',
-        //         detail: 'Тут может быть написана дополнительная важная информация для трейдера'
-        //     }
-        // )), 8000);
+        let intervalId = setInterval(() => ws.send(JSON.stringify(
+            {
+                title: 'Акции YNDX продолжают расти',
+                detail: 'Тут может быть написана дополнительная важная информация для трейдера'
+            }
+        )), 8000);
 
-        // ws.on('close', () => clearInterval(intervalId));
+        ws.on('close', () => clearInterval(intervalId));
     }
 );
 

@@ -1,5 +1,4 @@
 .SectorIndexGraph {
-    border: 0.5px solid black;
     display: grid;
     grid-template-rows: 1fr  11fr 1fr;
     margin: 10px auto;
@@ -8,10 +7,12 @@
 .plotArea {
     position: relative;
     overflow: hidden;
-}
+}   
 
 .plotLegend {
-    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 hr {
@@ -54,6 +55,9 @@ p.currentValue {
 
 .periodBlockElement {
     border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .periodBlockElement:hover {
@@ -62,7 +66,7 @@ p.currentValue {
 }
 
 .activeElement {
-    border: none;
+    border: 0.1px solid black;
 }
 
 .activeElement:hover {

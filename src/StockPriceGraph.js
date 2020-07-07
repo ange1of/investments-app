@@ -1,6 +1,7 @@
 import React from 'react';
 import './StockPriceGraph.css';
 import Candle from './Candle.js';
+import { unixTimeConversionFunctions } from './constants/unixTimeConversionFunctions';
 
 class StockPriceGraph extends React.Component {
     websocket = null;
@@ -15,12 +16,14 @@ class StockPriceGraph extends React.Component {
             period: null,
             candles: [],
             currentCandlePrices: [],
+            timeInterval: {}
         };
 
         this.renderCurrentPrice = this.renderCurrentPrice.bind(this);
         this.renderCurrentPriceLine = this.renderCurrentPriceLine.bind(this);
         this.renderCandles = this.renderCandles.bind(this);
         this.renderYValues = this.renderYValues.bind(this);
+        this.renderXValues = this.renderXValues.bind(this);
         this.getTopShift = this.getTopShift.bind(this);
         this.renderCurrentCandle = this.renderCurrentCandle.bind(this);
         this.changePeriod = this.changePeriod.bind(this);
@@ -107,6 +110,25 @@ class StockPriceGraph extends React.Component {
         );
     }
 
+    renderXValues() {
+        let values = [];
+        let key = 0;
+        for (let value of [
+            this.state.timeInterval.start, 
+            Math.round((this.state.timeInterval.start * 2 + this.state.timeInterval.end)/3),
+            Math.round((this.state.timeInterval.start + this.state.timeInterval.end * 2)/3),
+            this.state.timeInterval.end
+        ]) {
+            values.push(
+            <p key={key++}>
+                <code>{unixTimeConversionFunctions[this.state.period](value)}</code>
+            </p>
+            );
+        }
+
+        return values;
+    }
+
     renderCurrentCandle() {
         return (
             <Candle
@@ -127,6 +149,7 @@ class StockPriceGraph extends React.Component {
                 .then(result => {
                     this.setState({
                         prices: result.prices,
+                        timeInterval: result.timeInterval,
                         currentPrice: result.prices[result.prices.length - 1],
                         maxPlotPrice: Math.max(...result.prices) * 1.005,
                         minPlotPrice: Math.min(...result.prices) * 0.995,
@@ -149,23 +172,23 @@ class StockPriceGraph extends React.Component {
                 <div className="periodBlock">
                     <div className={`periodBlockElement ${this.state.period==='5min' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('5min')}>
-                        5 мин
+                        <code>5 мин</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1hour' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1hour')}>
-                        1 час
+                        <code>1 час</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1day' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1day')}>
-                        1 день
+                        <code>1 день</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1month' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1month')}>
-                        1 мес
+                        <code>1 мес</code>
                     </div>
                     <div className={`periodBlockElement ${this.state.period==='1year' ? 'activeElement': ''}`}
                         onClick={() => this.changePeriod('1year')}>
-                        1 год
+                        <code>1 год</code>
                     </div>
                 </div>
                 <div className="plotArea" style={{height: this.plotHeight+'px'}}>
@@ -176,7 +199,7 @@ class StockPriceGraph extends React.Component {
                     {this.renderYValues()}
                 </div>
                 <div className="plotLegend">
-
+                    {this.state.period ? this.renderXValues() : ''}
                 </div>
             </div>
         );

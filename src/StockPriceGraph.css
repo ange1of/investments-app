@@ -1,6 +1,6 @@
 .StockPriceGraph {
     display: grid;
-    grid-template-rows: 1fr 11fr 1fr;
+    grid-template-rows: 1fr 10fr 1fr;
 }
 
 .plotArea {
@@ -9,11 +9,6 @@
     display: flex;
     justify-items: space-between;
     overflow: hidden;
-}
-
-.plotLegend {
-    width: 100%;
-    border: 1px solid black;
 }
 
 .currentPriceLine {
