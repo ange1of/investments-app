@@ -5,20 +5,23 @@ class Notification extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            styleObject: {}
+            open: true
         };
         this.closeNotification = this.closeNotification.bind(this);
     }
 
     componentDidMount() {
-        setTimeout(this.closeNotification, 5000);
+        setTimeout(this.closeNotification, 4000);
     }
 
     closeNotification() {
-        this.setState({ styleObject: { display: 'none' } });
+        this.setState({ open: false });
     }
 
     render() {
+        if (!this.state.open) {
+            return '';
+        }
         return (
             <div className="Notification" style={this.state.styleObject}>
                 <div className="closeButton" onClick={this.closeNotification}>

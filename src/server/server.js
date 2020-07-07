@@ -1,8 +1,10 @@
 const utils = require('./utils.js');
 const express = require('express');
-const WebSocket = require('ws');
+const expressWs = require('express-ws');
 
 const app = express();
+expressWs(app);
+
 const port = 3001;
 
 app.get('/api/stock-list', (request, response) => {
@@ -94,6 +96,7 @@ app.get('/api/stock-detail/:ticker', (request, response) => {
             income: '16.4 млн'
         }
     });
+
 });
 
 app.get('/api/stock-price/:ticker/:period', (request, response) => {
@@ -105,10 +108,28 @@ app.get('/api/stock-price/:ticker/:period', (request, response) => {
     });
 });
 
-const server = app.listen(port);
+// Setup notifications server
+app.ws('/api/notifications', 
+    (ws, request) => {
+        console.log('[WS] connection at /api/notifications')
+        let intervalId = setInterval(() => ws.send(JSON.stringify(
+            {
+                title: 'Акции YNDX продолжают расти',
+                detail: 'Тут может быть написана дополнительная важная информация для трейдера'
+            }
+        )), 8000);
 
-const wss = new WebSocket.Server({ server: server });
+        ws.on('close', () => clearInterval(intervalId));
+    }
+);
 
-wss.on('connection', (ws) => {
-    setInterval(() => ws.send(JSON.stringify(utils.nextPrice())), 1000);
-});
+//Setup WS for current stock
+app.ws(`/api/stock-price/`, 
+    (ws, request) => {
+        console.log('[WS] connection at /api/stock-price');
+        let intervalId = setInterval(() => ws.send(JSON.stringify(utils.nextPrice())), 1000);
+        ws.on('close', () => clearInterval(intervalId));
+    }
+);
+
+app.listen(port);

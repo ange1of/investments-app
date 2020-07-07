@@ -60,7 +60,6 @@ class StockPriceGraph extends React.Component {
         let key = 0;
         let newCandles = [];
         for (let i = 0; i < this.prices.length; i+= chunkSize) {
-            console.log(i);
             newCandles.push(
                 <Candle
                     key={key++}
