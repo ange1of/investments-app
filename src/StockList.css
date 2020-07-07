@@ -5,3 +5,16 @@
     align-items: center;
     margin: 0 auto;
 }
+
+.openStockList {
+    display: inline-flex;
+    align-items: center;
+}
+
+.openStockList:hover {
+    cursor: pointer;
+}
+
+.openStockList>svg {
+    margin-right: 5px;
+}

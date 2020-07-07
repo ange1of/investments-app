@@ -1,5 +1,42 @@
 .SectorIndexGraph {
-    border: 1px solid black;
-    /* width: auto; */
+    border: 0.5px solid black;
+    display: grid;
+    grid-template-rows: 11fr 1fr;
     margin: 10px auto;
+}
+
+.plotArea {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    border-bottom: 0.5px solid black;
+}
+
+.plotLegend {
+    border: none;
+}
+
+hr {
+    position: absolute;
+    width: 100%;
+}
+
+p.currentValue {
+    position: absolute;
+    font-size: small;
+}
+
+.yValues {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: -1;
+}
+
+.yValue {
+    font-size: small;
+
 }

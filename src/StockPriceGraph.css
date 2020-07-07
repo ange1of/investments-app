@@ -9,6 +9,7 @@
     border: 1px solid black;
     display: flex;
     justify-items: space-between;
+    overflow: hidden;
 }
 
 .plotLegend {

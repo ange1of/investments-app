@@ -50,7 +50,7 @@ class StockDetail extends React.Component {
       return <ErrorMessage message={this.errorMessage}/>
     }
     if (!this.state || !this.data) {
-      return <div>Loading...</div>
+      return <div>Загрузка...</div>
     }
     return (
       <div className="StockDetail">

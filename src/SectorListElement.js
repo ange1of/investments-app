@@ -55,7 +55,7 @@ class SectorListElement extends React.Component {
                         <code>Изменение с момента открытия</code>
                         <p 
                             style={{ color: this.props.valueChangePercent < 0 ? 'red': 'green' }}>
-                            {this.props.valueChangePercent}
+                            {this.props.valueChangePercent} %
                         </p>
                         <svg width="10" height="10">
                             {this.props.valueChangePercent > 0 ?

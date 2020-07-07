@@ -81,7 +81,7 @@ class StockPriceGraph extends React.Component {
         console.log(this.state.candles.length);
         if (!this.state || !this.state.candles) {
             return (
-                <div>Loading data...</div>
+                <div>Загрузка данных...</div>
             );
         }
         return (
