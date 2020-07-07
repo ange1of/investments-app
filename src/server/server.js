@@ -68,7 +68,7 @@ app.get('/api/sector-list', (request, response) => {
 });
 
 app.get('/api/index-value/:id/:period', (request, response) => {
-    console.log('[GET] /api/index-value');
+    console.log(`[GET] /api/index-value/${request.params.id}/${request.params.period}`);
 
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
@@ -77,7 +77,7 @@ app.get('/api/index-value/:id/:period', (request, response) => {
 });
 
 app.get('/api/stock-detail/:ticker', (request, response) => {
-    console.log('[GET] /api/stock-detail');
+    console.log(`[GET] /api/stock-detail/${request.params.ticker}`);
 
     const ticker = request.params.ticker;
     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -100,7 +100,7 @@ app.get('/api/stock-detail/:ticker', (request, response) => {
 });
 
 app.get('/api/stock-price/:ticker/:period', (request, response) => {
-    console.log('[GET] /api/stock-price');
+    console.log(`[GET] /api/stock-price/${request.params.ticker}/${request.params.period}`);
 
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.send({
@@ -111,15 +111,15 @@ app.get('/api/stock-price/:ticker/:period', (request, response) => {
 // Setup notifications server
 app.ws('/api/notifications', 
     (ws, request) => {
-        console.log('[WS] connection at /api/notifications')
-        let intervalId = setInterval(() => ws.send(JSON.stringify(
-            {
-                title: 'Акции YNDX продолжают расти',
-                detail: 'Тут может быть написана дополнительная важная информация для трейдера'
-            }
-        )), 8000);
+        console.log('[WS] connection at /api/notifications');
+        // let intervalId = setInterval(() => ws.send(JSON.stringify(
+        //     {
+        //         title: 'Акции YNDX продолжают расти',
+        //         detail: 'Тут может быть написана дополнительная важная информация для трейдера'
+        //     }
+        // )), 8000);
 
-        ws.on('close', () => clearInterval(intervalId));
+        // ws.on('close', () => clearInterval(intervalId));
     }
 );
 

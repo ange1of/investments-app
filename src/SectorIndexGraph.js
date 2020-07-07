@@ -4,15 +4,16 @@ import './SectorIndexGraph.css';
 
 class SectorIndexGraph extends React.Component {
     plotHeight = 300;
-    values = [];
 
     constructor(props) {
         super(props);
+        this.id = props.id;
         this.state = {
             candles: [],
-            value: props.value
+            value: props.value,
+            values: [],
+            period: null
         };
-        this.period = 'day';
         this.renderCandles = this.renderCandles.bind(this);
         this.renderCurrentValueLine = this.renderCurrentValueLine.bind(this);
         this.renderCurrentValue = this.renderCurrentValue.bind(this);
@@ -21,32 +22,24 @@ class SectorIndexGraph extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`http://localhost:3001/api/index-value/${this.props.id}/${this.period}`)
-            .then(result => result.json())
-            .then(result => {
-                this.values = result.values;
-                this.maxPlotValue = Math.max(...this.values) + 5;
-                this.minPlotValue = Math.min(...this.values) - 5;
-                this.renderCandles();
-                this.setState({ value: this.values[this.values.length - 1]});
-            });
+        this.changePeriod('5min');
     }
 
     getTopShift(value=this.state.value) {
-        return (this.maxPlotValue - value)/(this.maxPlotValue - this.minPlotValue) * this.plotHeight;
+        return (this.state.maxPlotValue - value)/(this.state.maxPlotValue - this.state.minPlotValue) * this.plotHeight;
     }
 
     renderCandles() {
-        let chunkSize = Math.round(this.values.length/30);
+        let chunkSize = Math.round(this.state.values.length/30);
         let key = 0;
         let newCandles = [];
-        for (let i = 0; i < this.values.length; i+= chunkSize) {
+        for (let i = 0; i < this.state.values.length; i+= chunkSize) {
             newCandles.push(
                 <Candle
                     key={key++}
-                    prices={this.values.slice(i, i+chunkSize)}
-                    maxPlotPrice={this.maxPlotValue}
-                    minPlotPrice={this.minPlotValue}
+                    prices={this.state.values.slice(i, i+chunkSize)}
+                    maxPlotPrice={this.state.maxPlotValue}
+                    minPlotPrice={this.state.minPlotValue}
                     plotHeight={this.plotHeight}
                 />
             );
@@ -72,16 +65,16 @@ class SectorIndexGraph extends React.Component {
         let key = 0;
         values.push(
             <div className="yValue" key={key++} style={{ top: 0 }}>
-                <code>{Math.round(this.maxPlotValue)}</code>
+                <code>{Math.round(this.state.maxPlotValue)}</code>
             </div>,
             <div className="yValue" key={key++} style={{ bottom: 0 }}>
-                <code>{Math.round(this.minPlotValue)}</code>
+                <code>{Math.round(this.state.minPlotValue)}</code>
             </div>
         );
 
         for (let value of [
-            (this.maxPlotValue*2 + this.minPlotValue)/3,
-            (this.minPlotValue*2 + this.maxPlotValue)/3,
+            (this.state.maxPlotValue*2 + this.state.minPlotValue)/3,
+            (this.state.minPlotValue*2 + this.state.maxPlotValue)/3,
         ]) {
             values.push(<div className="yValue" key={key++} style={{ top: this.getTopShift(value)+2+'px' }}>
                 <hr className="yValueLine"/>
@@ -95,6 +88,23 @@ class SectorIndexGraph extends React.Component {
         );
     }
 
+    changePeriod(period) {
+        if (period === this.state.period) return;
+
+        this.setState({ period: period }, () => {
+            fetch(`http://localhost:3001/api/index-value/${this.props.id}/${this.state.period}`)
+                .then(result => result.json())
+                .then(result => {
+                    this.setState({
+                        value: result.values[result.values.length - 1],
+                        values: result.values,
+                        maxPlotValue: Math.max(...result.values) + 5,
+                        minPlotValue: Math.min(...result.values) - 5
+                }, () => this.renderCandles());
+            });
+        });
+    }
+
     render() {
         if (!this.state.candles.length) {
             return (
@@ -103,6 +113,28 @@ class SectorIndexGraph extends React.Component {
         }
         return (
             <div className="SectorIndexGraph">
+                <div className="periodBlock">
+                    <div className={`periodBlockElement ${this.state.period==='5min' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('5min')}>
+                        5 мин
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1hour' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1hour')}>
+                        1 час
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1day' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1day')}>
+                        1 день
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1month' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1month')}>
+                        1 мес
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1year' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1year')}>
+                        1 год
+                    </div>
+                </div>
                 <div className="plotArea" style={{height: this.plotHeight+'px'}}>
                     {this.state.candles}
                     {this.renderCurrentValueLine()}

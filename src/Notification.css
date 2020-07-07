@@ -1,7 +1,7 @@
 .Notification {
-    background-color: rgba(220, 230, 255);
+    background-color: rgb(220, 230, 255);
     border-radius: 5px;
-    border: 1px solid rgba(139, 172, 255);
+    border: 1px solid rgb(139, 172, 255);
     padding: 5px;
     margin: 5px;
     display: flex;
@@ -10,7 +10,7 @@
 }
 
 .Notification:hover {
-    background-color: rgba(139, 172, 255);
+    background-color: rgb(139, 172, 255);
 }
 
 .closeButton {

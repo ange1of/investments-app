@@ -3,15 +3,16 @@ import './StockPriceGraph.css';
 import Candle from './Candle.js';
 
 class StockPriceGraph extends React.Component {
-    prices = [];
     websocket = null;
+    plotHeight = 400;
 
     constructor(props) {
         super(props);
         this.websocket = props.websocket;
         this.ticker = props.ticker;
         this.state = {
-            period: '5min',
+            prices: [],
+            period: null,
             candles: [],
             currentCandlePrices: [],
         };
@@ -22,45 +23,29 @@ class StockPriceGraph extends React.Component {
         this.renderYValues = this.renderYValues.bind(this);
         this.getTopShift = this.getTopShift.bind(this);
         this.renderCurrentCandle = this.renderCurrentCandle.bind(this);
+        this.changePeriod = this.changePeriod.bind(this);
     }
 
     componentDidMount() {
-        fetch(`http://localhost:3001/api/stock-price/${this.ticker}/${this.state.period}`)
-        .then(result => result.json())
-        .then(result => {
-            this.prices = result.prices;
-            let maxPlotPrice = Math.max(...this.prices) * 1.005;
-            let minPlotPrice = Math.min(...this.prices) * 0.995;
-            let plotHeight = 400;
+        this.changePeriod('5min');
 
-            this.setState({
-                currentPrice: this.prices[this.prices.length - 1],
-                maxPlotPrice: maxPlotPrice,
-                minPlotPrice: minPlotPrice,
-                plotHeight: plotHeight,
-                currentCandlePrices: [this.prices[this.prices.length - 1]]
-            }, () => {
-                this.renderCandles();
-
-                this.websocket.addEventListener('message', event => {
-                    let newPrice = JSON.parse(event.data).buy;
-                    this.setState(state => {
-                        return {
-                            currentPrice: newPrice,
-                            maxPlotPrice: (newPrice > state.maxPlotPrice ? newPrice * 1.005 : state.maxPlotPrice),
-                            minPlotPrice: (newPrice < state.minPlotPrice ? newPrice * 0.995 : state.minPlotPrice),
-                            currentCandlePrices: [...state.currentCandlePrices, newPrice]
-                        }
-                    });
-                    this.renderCandles();
-                });
+        this.websocket.addEventListener('message', event => {
+            let newPrice = JSON.parse(event.data).buy;
+            this.setState(state => {
+                return {
+                    currentPrice: newPrice,
+                    maxPlotPrice: (newPrice > state.maxPlotPrice ? newPrice * 1.005 : state.maxPlotPrice),
+                    minPlotPrice: (newPrice < state.minPlotPrice ? newPrice * 0.995 : state.minPlotPrice),
+                    currentCandlePrices: [...state.currentCandlePrices, newPrice]
+                }
             });
+            this.renderCandles();
         });
     }
 
 
     getTopShift(value=this.state.currentPrice) {
-        return (this.state.maxPlotPrice - value)/(this.state.maxPlotPrice - this.state.minPlotPrice) * this.state.plotHeight;
+        return (this.state.maxPlotPrice - value)/(this.state.maxPlotPrice - this.state.minPlotPrice) * this.plotHeight;
     }
 
     renderCurrentPriceLine() {
@@ -76,17 +61,17 @@ class StockPriceGraph extends React.Component {
     }
 
     renderCandles() {
-        let chunkSize = Math.round(this.prices.length/30);
+        let chunkSize = Math.round(this.state.prices.length/30);
         let key = 0;
         let newCandles = [];
-        for (let i = 0; i < this.prices.length; i+= chunkSize) {
+        for (let i = 0; i < this.state.prices.length; i+= chunkSize) {
             newCandles.push(
                 <Candle
                     key={key++}
-                    prices={this.prices.slice(i, i+chunkSize)}
+                    prices={this.state.prices.slice(i, i+chunkSize)}
                     maxPlotPrice={this.state.maxPlotPrice}
                     minPlotPrice={this.state.minPlotPrice}
-                    plotHeight={this.state.plotHeight}
+                    plotHeight={this.plotHeight}
                 />
             );
         }
@@ -129,8 +114,28 @@ class StockPriceGraph extends React.Component {
                 prices={this.state.currentCandlePrices}
                 maxPlotPrice={this.state.maxPlotPrice}
                 minPlotPrice={this.state.minPlotPrice}
-                plotHeight={this.state.plotHeight}
+                plotHeight={this.plotHeight}
             />);
+    }
+
+    changePeriod(period) {
+        if (period === this.state.period) return;
+
+        this.setState({ period: period }, () => {
+            fetch(`http://localhost:3001/api/stock-price/${this.ticker}/${this.state.period}`)
+                .then(result => result.json())
+                .then(result => {
+                    this.setState({
+                        prices: result.prices,
+                        currentPrice: result.prices[result.prices.length - 1],
+                        maxPlotPrice: Math.max(...result.prices) * 1.005,
+                        minPlotPrice: Math.min(...result.prices) * 0.995,
+                        currentCandlePrices: [result.prices[result.prices.length - 1]]
+                    }, () => {
+                        this.renderCandles();
+                    });
+                });
+        });
     }
 
     render() {
@@ -141,14 +146,38 @@ class StockPriceGraph extends React.Component {
         }
         return (
             <div className="StockPriceGraph">
-                <div className="plotArea" style={{height: this.state.plotHeight+'px'}}>
+                <div className="periodBlock">
+                    <div className={`periodBlockElement ${this.state.period==='5min' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('5min')}>
+                        5 мин
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1hour' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1hour')}>
+                        1 час
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1day' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1day')}>
+                        1 день
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1month' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1month')}>
+                        1 мес
+                    </div>
+                    <div className={`periodBlockElement ${this.state.period==='1year' ? 'activeElement': ''}`}
+                        onClick={() => this.changePeriod('1year')}>
+                        1 год
+                    </div>
+                </div>
+                <div className="plotArea" style={{height: this.plotHeight+'px'}}>
                     {this.state.candles}
                     {this.renderCurrentCandle()}
                     {this.renderCurrentPriceLine()}
                     {this.renderCurrentPrice()}
                     {this.renderYValues()}
                 </div>
-                <div className="plotLegend"></div>
+                <div className="plotLegend">
+
+                </div>
             </div>
         );
     }
