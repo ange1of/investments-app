@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './MainMenu.css';
 import StockList from './StockList';
 import SectorList from './SectorList';
