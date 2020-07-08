@@ -119,7 +119,7 @@ app.ws('/api/notifications',
                 title: 'Акции YNDX продолжают расти',
                 detail: 'Тут может быть написана дополнительная важная информация для трейдера'
             }
-        )), 8000);
+        )), 4000);
 
         ws.on('close', () => clearInterval(intervalId));
     }

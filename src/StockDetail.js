@@ -27,7 +27,6 @@ class StockDetail extends React.Component {
     componentDidMount() {
         this.socket = new WebSocket(`ws://localhost:3001/api/stock-price`);
         this.socket.onmessage = event => {
-            console.log(`message: ${event.data}`);
             this.setState({
                 buyPrice: JSON.parse(event.data).buy,
                 sellPrice: JSON.parse(event.data).sell

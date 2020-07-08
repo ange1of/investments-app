@@ -1,10 +1,4 @@
-.StockDetail {
-    display: flex;
-    justify-items: center;
-    padding: 1vw;
-}
-
-.StockPriceContainer {
+.StockInfo {
     border: 1px solid black;
     height: fit-content;
     border-radius: 5px;
@@ -14,4 +8,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.StockInfo > h1 {
+    margin-top: 0;
 }

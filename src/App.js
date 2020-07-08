@@ -16,7 +16,6 @@ class App extends React.Component {
     componentDidMount() {
         this.notificationsWebSocket = new WebSocket('ws://localhost:3001/api/notifications');
         this.notificationsWebSocket.onmessage = event => {
-            console.log(`notification: ${event.data}`);
             const data = JSON.parse(event.data);
             this.setState((state) => {
                 return {

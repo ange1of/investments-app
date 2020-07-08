@@ -11,7 +11,7 @@ class Notification extends React.Component {
     }
 
     componentDidMount() {
-        setTimeout(this.closeNotification, 4000);
+        setTimeout(this.closeNotification, 5000);
     }
 
     closeNotification() {

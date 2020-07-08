@@ -1,13 +1,15 @@
 import React from 'react';
 import { currencies } from './constants/currencies.js';
+import './StockInfo.css';
 
 function StockInfo(props) {
     return (
         <div className="StockInfo">
-            <p>Отрасль <span>{props.sector}</span></p>
-            <p>Капитализация <span>{props.capitalization} {currencies[props.currency]}</span></p>
-            <p>Количество выпущенных акций <span>{props.stockCount}</span></p>
-            <p>Выручка <span>{props.income} {currencies[props.currency]}</span></p>
+            <h1>{props.name}</h1>
+            <p><b>Отрасль:</b> <span>{props.sector}</span></p>
+            <p><b>Капитализация:</b> <span>{props.capitalization} {currencies[props.currency]}</span></p>
+            <p><b>Количество выпущенных акций:</b> <span>{props.stockCount}</span></p>
+            <p><b>Выручка:</b> <span>{props.income} {currencies[props.currency]}</span></p>
         </div>
     );
 }

@@ -9,10 +9,12 @@
 .openStockList {
     display: inline-flex;
     align-items: center;
+    padding: 10px;
 }
 
 .openStockList:hover {
     cursor: pointer;
+    background-color: rgba(220, 230, 255, 0.3);
 }
 
 .openStockList>svg {

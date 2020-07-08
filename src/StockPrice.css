@@ -9,3 +9,11 @@
 .priceEqual {
     color: #000;
 }
+
+.priceBlock {
+    margin: 10px;
+}
+
+.priceBlock > h3 {
+    margin: 0;
+}
